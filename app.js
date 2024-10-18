@@ -102,7 +102,7 @@ function onTouch(touchPos) {
   const raycastResult = scene.pick(x, y);
   if (raycastResult.hit && raycastResult.pickedMesh === floor) {
     // Load a 3D model and add it to the scene over touched position
-    BABYLON.SceneLoader.ImportMesh("", "bear.glb", null, scene, (meshes) => {
+    BABYLON.SceneLoader.ImportMesh("", "models/Steerad.glb", null, scene, (meshes) => {
       const model = meshes[0];
       model.position = new BABYLON.Vector3(
         raycastResult.pickedPoint.x,
