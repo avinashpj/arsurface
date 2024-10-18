@@ -19,12 +19,7 @@ function setupRenderer(rendererCanvas) {
   // Ask Onirix SDK for camera parameters to create a 3D camera that fits with the AR projection.
   const cameraParams = OX.getCameraParameters();
   camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
-  const projectionMatrix = BABYLON.Matrix.PerspectiveFovRH(
-    cameraParams.fov * (Math.PI / 180),
-    cameraParams.aspect,
-    0.01,
-    1000
-  );
+  const projectionMatrix = BABYLON.Matrix.PerspectiveFovRH(cameraParams.fov * (Math.PI / 180), cameraParams.aspect, 0.01, 1000);
   camera.freezeProjectionMatrix(projectionMatrix);
 
   // Add some lights
@@ -39,6 +34,9 @@ function setupRenderer(rendererCanvas) {
   // Rotate floor to be horizontal and place it 1 meter below camera
   floor.rotation.x = Math.PI / 2;
   floor.position.y = -1;
+
+  const modelsToLoad = ["Recticle.glb", "Steerad.glb", "Sterrad_PARTS.glb", "USAGE.glb", "USP_1.glb", "UPS_2.glb", "UPS_3.glb"];
+
 }
 
 function updatePose(pose) {
@@ -83,39 +81,36 @@ function onResize() {
   // When device orientation changes, it is required to update camera params.
   engine.resize();
   const cameraParams = OX.getCameraParameters();
-  const projectionMatrix = BABYLON.Matrix.PerspectiveFovRH(
-    cameraParams.fov * (Math.PI / 180),
-    cameraParams.aspect,
-    0.01,
-    1000
-  );
+  const projectionMatrix = BABYLON.Matrix.PerspectiveFovRH(cameraParams.fov * (Math.PI / 180), cameraParams.aspect, 0.01, 1000);
   camera.freezeProjectionMatrix(projectionMatrix);
 }
 
 function onTouch(touchPos) {
+  console.log(touchPos, touchPos.x);
+  add3DItem();
+}
+
+function add3DItem() {
   // Raycast
   const cx = engine.getRenderWidth() / 2;
   const cy = engine.getRenderHeight() / 2;
-  const x = cx * (touchPos.x + 1);
-  const y = cy * (-touchPos.y + 1);
+  const x = cx * (0 + 1);
+  const y = cy * (0 + 1);
   const raycastResult = scene.pick(x, y);
   if (raycastResult.hit && raycastResult.pickedMesh === floor) {
     // Load a 3D model and add it to the scene over touched position
     BABYLON.SceneLoader.ImportMesh("", "models/Steerad.glb", null, scene, (meshes) => {
       const model = meshes[0];
-      model.position = new BABYLON.Vector3(
-        raycastResult.pickedPoint.x,
-        raycastResult.pickedPoint.y,
-        raycastResult.pickedPoint.z
-      );
+      model.position = new BABYLON.Vector3(raycastResult.pickedPoint.x, raycastResult.pickedPoint.y, raycastResult.pickedPoint.z);
       // Model looking to the camera on Y axis
-      model.rotation.y = Math.atan2(camera.position.x - model.position.x, camera.position.z - model.position.z);
+      // model.rotation.y = Math.atan2(camera.position.x - model.position.x, camera.position.z - model.position.z);
     });
 
     // Start tracking on first touch
     if (!started) {
       OX.start();
       started = true;
+
     }
   }
 }
@@ -137,6 +132,8 @@ OX.init(config)
 
     // All loaded, so hide loading screen
     document.getElementById("loading-screen").style.display = "none";
+
+    // add3DItem();
 
     // Subscribe to events
     OX.subscribe(OnirixSDK.Events.OnPose, function (pose) {
