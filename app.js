@@ -3,7 +3,6 @@
 import OnirixSDK from "https://unpkg.com/@onirix/ar-engine-sdk@1.6.5/dist/ox-sdk.esm.js";
 
 // BabylonJS
-
 var engine, scene, camera, background, floor, started;
 
 function setupRenderer(rendererCanvas) {
